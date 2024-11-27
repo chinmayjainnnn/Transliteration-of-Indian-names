@@ -42,7 +42,7 @@ from collections import Counter, defaultdict
 from torchtext.vocab import build_vocab_from_iterator
 from torch.utils.data import DataLoader
 
-"""Please note that we may change the contents of the following four files when we rerun your code, so please make sure that your solution is not specifically engineered to just these names."""
+
 
 # Download the training and validation datasets
 # !wget -O train_data.csv "https://docs.google.com/spreadsheets/d/1AUzwOQQbAehg_eoAMCcWfwSGhKwSAtnIzapt2wbv0Zs/gviz/tq?tqx=out:csv&sheet=train_data.csv"
@@ -52,7 +52,7 @@ from torch.utils.data import DataLoader
 # !wget -O eval_prefixes.txt "https://drive.google.com/uc?export=download&id=1tuRLJXLd2VcDaWENr8JTZMcjFlwyRo60"
 # !wget -O eval_sequences.txt "https://drive.google.com/uc?export=download&id=1kjPAR04UTKmdtV-FJ9SmDlotkt-IKM3b"
 
-## Please do not change anything in this code block.
+
 
 def read_dataframe(ds_type):
     """
@@ -85,7 +85,7 @@ with open('eval_sequences.txt', 'r') as file:
 
 print(f"Length of training data: {len(train_data)}\nLength of validation data: {len(validation_data)}")
 
-## Please do not change anything in this code block.
+
 
 START = "<s>"   # Start-of-name token
 END = "</s>"    # End-of-name token
@@ -211,9 +211,7 @@ Load and preprocess the data for n-gram models
 
 """choose your hyperparameter and see the difference in performance"""
 
-# CHANGE THE None VALUES TO YOUR DESIRED VALUES
 
-# ADD YOUR CODE HERE
 
 MAX_NAME_LENGTH = 30 # maximum length of names for generation
 
@@ -444,7 +442,7 @@ class NGramLanguageModel(object):
         """
         return []
 
-## Please do not change anything in this code block.
+   
 
 def check_validity(model, ngram, is_neural):
     """
@@ -543,7 +541,7 @@ class UnigramModel(NGramLanguageModel):
         """
         self.unigram_count=get_unigram_counts(train_text)
         self.unigram_total=sum(self.unigram_count.values())
-        # ADD YOUR CODE HERE
+        
 
 
     def get_next_char_probabilities(self):
@@ -557,8 +555,7 @@ class UnigramModel(NGramLanguageModel):
         for char,value in self.unigram_count.items():
             next_char_probabilities[char]=self.unigram_count[char]/self.unigram_total
 
-        # ADD YOUR CODE HERE
-
+    
         return next_char_probabilities
 
     def get_name_log_probability(self, name):
@@ -589,7 +586,7 @@ class UnigramModel(NGramLanguageModel):
             perplexity of the given text [float]
         """
 
-        # ADD YOUR CODE HERE
+        
         # Get log probability of the text
         log_prob = sum(self.get_name_log_probability(name)/len(name) for name in text)
         # Calculate perplexity
@@ -621,7 +618,7 @@ class UnigramModel(NGramLanguageModel):
                 temp.append(cha)
             name_str = "".join(temp)
             names.append(name_str)
-        # ADD YOUR CODE HERE
+        
         return names
 
 
@@ -639,7 +636,7 @@ class UnigramModel(NGramLanguageModel):
                         character at index k-1 being the least likely)
 
         """
-        # ADD YOUR CODE HERE
+       
         next_char_probabilities = self.get_next_char_probabilities()
         most_likely_chars = sorted(next_char_probabilities, key=next_char_probabilities.get, reverse=True)[:k]
         return most_likely_chars
@@ -650,7 +647,7 @@ class UnigramModel(NGramLanguageModel):
 However, this should not happen for models where you implement smoothing.
 """
 
-## Please do not change anything in this code block.
+
 
 unigram_model = UnigramModel(train_text)
 
@@ -658,7 +655,7 @@ unigram_model = UnigramModel(train_text)
 print('unigram train perplexity:',
       unigram_model.get_perplexity(train_text))
 
-## Please do not change anything in this code block.
+
 
 eval_ngram_model(model=unigram_model, ngram=1, ds=validation_text, ds_name='validation', eval_prefixes=eval_prefixes, eval_sequences=eval_sequences, num_names=5)
 
@@ -689,7 +686,7 @@ class SmoothedUnigramModel(UnigramModel):
 
     # Implement Laplace or Add-1 smoothing for the unigram model
 
-    # ADD YOUR CODE HERE
+    
     # self.unigram_count=get_unigram_counts(train_text)
     # self.unigram_total=sum(self.unigram_count.values())
         vocab_size = len(self.unigram_count)
@@ -698,7 +695,7 @@ class SmoothedUnigramModel(UnigramModel):
         # Calculate smoothed probabilities using Add-1 smoothing
         next_char_probabilities = {char: (count + 1) / (total_chars + vocab_size) for char, count in self.unigram_count.items()}
 
-## Please do not change anything in this code block.
+   
 
 smoothed_unigram_model = SmoothedUnigramModel(train_text)
 
@@ -706,7 +703,7 @@ smoothed_unigram_model = SmoothedUnigramModel(train_text)
 print('smoothed unigram train perplexity:',
       smoothed_unigram_model.get_perplexity(train_text))
 
-## Please do not change anything in this code block.
+   
 
 eval_ngram_model(model=smoothed_unigram_model, ngram=1, ds=validation_text, ds_name='validation', eval_prefixes=eval_prefixes, eval_sequences=eval_sequences,  num_names=5)
 
@@ -730,7 +727,7 @@ class BigramModel(NGramLanguageModel):
         """
         self.bigram_count=get_bigram_counts(train_text)
 
-        # ADD YOUR CODE HERE
+       
 
     def get_next_char_probabilities(self):
         """
@@ -754,7 +751,7 @@ class BigramModel(NGramLanguageModel):
             for char2, count in char_count.items():
                 prob = count / total_counts
                 next_char_probabilities[char1][char2] = prob
-            # ADD YOUR CODE HERE
+            
 
         return next_char_probabilities
 
@@ -774,7 +771,7 @@ class BigramModel(NGramLanguageModel):
         #   for char in name:
         #   name_log_probability += np.log(self.unigram_count.get(char,0)/self.unigram_total)
         #   return name_log_probability
-        # ADD YOUR CODE HERE
+        
 
         name_log_probability=0.0
         for i in range(1,len(name)):
@@ -798,7 +795,7 @@ class BigramModel(NGramLanguageModel):
             perplexity of the given text [float]
         """
 
-        # ADD YOUR CODE HERE
+        
         log_prob = sum(self.get_name_log_probability(name)/len(name) for name in text)
         # Calculate perplexity
         perplexity = math.exp(-log_prob / len(text))
@@ -819,7 +816,7 @@ class BigramModel(NGramLanguageModel):
         Returns:
             list of generated names [list]
         """
-        # ADD YOUR CODE HERE
+      
 
         names = []
         next_char_probs = self.get_next_char_probabilities()
@@ -858,7 +855,7 @@ class BigramModel(NGramLanguageModel):
                         character at index k-1 being the least likely)
 
         """
-        # ADD YOUR CODE HERE
+        
         most_likely_chars=[]
         if len(sequence)>0 and sequence[-1] in self.bigram_count:
             next_char_probs = self.bigram_count[sequence[-1]]
@@ -868,7 +865,7 @@ class BigramModel(NGramLanguageModel):
 
 """### Eval"""
 
-## Please do not change anything in this code block.
+   
 
 bigram_model = BigramModel(train_text)
 
@@ -876,7 +873,7 @@ bigram_model = BigramModel(train_text)
 print('bigram train perplexity:',
       bigram_model.get_perplexity(train_text))
 
-## Please do not change anything in this code block.
+   
 
 eval_ngram_model(model=bigram_model, ngram=2, ds=validation_text, ds_name='validation', eval_prefixes=eval_prefixes, eval_sequences=eval_sequences, num_names=5)
 
@@ -899,11 +896,9 @@ To choose the hyperparameter BIGRAM_LAPLACE_K, we can experiment with different 
 
 """choose your hyperparameter and see the difference in performance"""
 
-# ADD YOUR CODE HERE
 
-# CHANGE THE None VALUES TO YOUR DESIRED VALUES
-# Please feel free to play with these hyperparameters to see the effects on the
-# quality of generated names and perplexity
+
+
 
 BIGRAM_LAPLACE_K = 0.5 # value of k for add-k or Laplac smoothing in bigram models
 
@@ -925,7 +920,7 @@ class LaplaceSmoothedBigramModel(BigramModel):
     # or any other helper functions you use in BigramModel
     # to calculate bigram probabilities.
 
-    # ADD YOUR CODE HERE
+    
     def get_next_char_probabilities(self):
         """
         Returns a probability distribution over all chars in the vocabulary.
@@ -956,7 +951,7 @@ class LaplaceSmoothedBigramModel(BigramModel):
 
         return next_char_probabilities
 
-## Please do not change anything in this code block.
+   
 
 smoothed_bigram_model = LaplaceSmoothedBigramModel(train_text, k=BIGRAM_LAPLACE_K)
 
@@ -964,7 +959,7 @@ smoothed_bigram_model = LaplaceSmoothedBigramModel(train_text, k=BIGRAM_LAPLACE_
 print('smoothed bigram train perplexity:',
       smoothed_bigram_model.get_perplexity(train_text))
 
-## Please do not change anything in this code block.
+   
 
 eval_ngram_model(model=smoothed_bigram_model, ngram=2, ds=validation_text, ds_name='validation', eval_prefixes=eval_prefixes, eval_sequences=eval_sequences, num_names=5)
 
@@ -974,7 +969,7 @@ eval_ngram_model(model=smoothed_bigram_model, ngram=2, ds=validation_text, ds_na
 
 """choose your hyperparameter and see the difference in performance"""
 
-# ADD YOUR CODE HERE
+
 
 # CHANGE THE None VALUES TO YOUR DESIRED VALUES
 # Please feel free to play with these hyperparameters to see the effects on the
@@ -1002,7 +997,7 @@ class InterpolationSmoothedBigramModel(BigramModel):
     # or any other helper functions you use in BigramModel
     # to calculate bigram probabilities.
 
-    # ADD YOUR CODE HERE
+   
 
         """
         Initialise and train the model with train_text.
@@ -1054,7 +1049,7 @@ class InterpolationSmoothedBigramModel(BigramModel):
             unigram_probabilities[char] = prob
         return unigram_probabilities
 
-## Please do not change anything in this code block.
+   
 
 smoothed_bigram_model = InterpolationSmoothedBigramModel(train_text, lambdas=BIGRAM_LAMBDAS)
 
@@ -1062,7 +1057,7 @@ smoothed_bigram_model = InterpolationSmoothedBigramModel(train_text, lambdas=BIG
 print('smoothed bigram train perplexity:',
       smoothed_bigram_model.get_perplexity(train_text))
 
-## Please do not change anything in this code block.
+   
 
 eval_ngram_model(model=smoothed_bigram_model, ngram=2, ds=validation_text, ds_name='validation', eval_prefixes=eval_prefixes, eval_sequences=eval_sequences, num_names=5)
 
@@ -1074,9 +1069,9 @@ del smoothed_bigram_model
 
 """choose your hyperparameter and see the difference in performance"""
 
-# ADD YOUR CODE HERE
 
-# CHANGE THE None VALUES TO YOUR DESIRED VALUES
+
+
 # Please feel free to play with these hyperparameters to see the effects on the
 # quality of generated names and perplexity
 
@@ -1096,7 +1091,7 @@ class TrigramModel(NGramLanguageModel):
         Args:
             train_text [list of list]: list of tokenised names
         """
-        # ADD YOUR CODE HERE
+        
         self.trigram_count=get_trigram_counts(train_text)
         self.lambda_1, self.lambda_2,self.lambda_3 = 0.6,0.25,0.15
 
@@ -1126,7 +1121,7 @@ class TrigramModel(NGramLanguageModel):
                     > P["a"]["b"]["c"] = 0.0001 (corresponding to P(c|ab))
         """
 
-        # ADD YOUR CODE HERE
+        
         next_char_probabilities = {}
 
         for char1 in self.vocab:
@@ -1207,7 +1202,7 @@ class TrigramModel(NGramLanguageModel):
             perplexity of the given text [float]
         """
 
-        # ADD YOUR CODE HERE
+         
         log_prob = sum(self.get_name_log_probability(name)/len(name) for name in text)
         # Calculate perplexity
         perplexity = math.exp(-log_prob / len(text))
@@ -1246,7 +1241,7 @@ class TrigramModel(NGramLanguageModel):
             names.append(name_str)
         return names
         """
-        # ADD YOUR CODE HERE
+        
         names = []
         next_char_probs = self.get_next_char_probabilities()
         for _ in range(k):
@@ -1292,20 +1287,20 @@ class TrigramModel(NGramLanguageModel):
                         character at index k-1 being the least likely)
 
         """
-        # ADD YOUR CODE HERE
+         
         most_likely_chars=[]
         return most_likely_chars
 
 """#### Eval"""
 
-## Please do not change anything in this code block.
+   
 
 trigram_model = TrigramModel(train_text)
 
 print('trigram train perplexity:',
       trigram_model.get_perplexity(train_text))
 
-## Please do not change anything in this code block.
+   
 
 eval_ngram_model(model=trigram_model, ngram=3, ds=validation_text, ds_name='validation', eval_prefixes=eval_prefixes, eval_sequences=eval_sequences, num_names=5)
 
@@ -1316,11 +1311,9 @@ del trigram_model
 
 ## 2.1 Neural N-gram Language Model
 
-For this part of the assignment, you should use the GPU (you can do this by changing the runtime of this notebook).
 
-In this section, you will implement a neural version of an n-gram model.  The model will use a simple feedforward neural network that takes the previous `n-1` chars and outputs a distribution over the next char.
 
-You will use PyTorch to implement the model.  We've provided a little bit of code to help with the data loading using [PyTorch's data loaders](https://pytorch.org/docs/stable/data.html)
+In this  a neural version of an n-gram model is implemented.  The model will use a simple feedforward neural network that takes the previous `n-1` chars and outputs a distribution over the next char.
 """
 
 # Import the necessary libraries
@@ -1341,7 +1334,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 import torch.nn.functional as F
 
-## Please do not change anything in this code block.
+   
 
 def collate_ngram(batch, text_pipeline):
     """
@@ -1471,7 +1464,7 @@ class FNN_LM(nn.Module):
         super(FNN_LM, self).__init__()
         self.ngram = ngram
         self.embsize=emb_size
-        # YOUR CODE HERE
+            
 
         # Embedding layer
         self.embedding = nn.Embedding(vocab_size, emb_size)
@@ -1497,7 +1490,7 @@ class FNN_LM(nn.Module):
 
         """
 
-        # YOUR CODE HERE
+            
         # Embedding the characters
         x = self.embedding(chars)  # [batch_size, ngram-1, emb_size]
         # print("Shape of x before view:", x.shape)
@@ -1513,7 +1506,7 @@ class FNN_LM(nn.Module):
 
         return logits
 
-"""**The following is the Trainer class for the FNN LM. Add your code for the `training` and `validation` loops.**"""
+"""**The following is the Trainer class for the FNN LM. """
 
 class NeuralNGramTrainer:
     """
@@ -1561,10 +1554,9 @@ class NeuralNGramTrainer:
         Trains the model with train_dataloader and validates using valid_dataloader
 
         """
-        # You may change the input arguments to this function,
-        # but make sure to also change the code wherever this function is called
+        
 
-        # ADD YOUR CODE HERE
+         
         # FOR TRAINING & VALIDATION
         for epoch in range(self.epochs):
             self.model.train()
@@ -1647,7 +1639,7 @@ class NeuralNGramTrainer:
 
         """
 
-        # ADD YOUR CODE HERE
+         
         start_sequence = [START] * (self.ngram - 1)
 
         char_probs = {}
@@ -1692,7 +1684,7 @@ class NeuralNGramTrainer:
           input_tensor = torch.tensor([input_sequence])
         """
 
-        # ADD YOUR CODE HERE
+         
 
         # don't forget self.model.eval()
 
@@ -1748,7 +1740,7 @@ class NeuralNGramTrainer:
 
         """
 
-        # ADD YOUR CODE HERE
+         
 
         # you may want to use the dataloader here
         # don't forget self.model.eval()
@@ -1787,7 +1779,7 @@ class NeuralNGramTrainer:
     #                     character at index k-1 being the least likely)
     #     """
 
-    #     # ADD YOUR CODE HERE
+    #      
 
     #     # don't forget self.model.eval()
 
@@ -1826,11 +1818,11 @@ class NeuralNGramTrainer:
 
             """
 
-            # ADD YOUR CODE HERE
+             
 
             # don't forget self.model.eval()
 
-            # BEGIN CODE
+            
             # Ensure model is in evaluation mode
             self.model.eval()
 
@@ -1863,7 +1855,7 @@ class NeuralNGramTrainer:
 
 """choose your hyperparameter and see the difference in performance"""
 
-# ADD YOUR CODE HERE
+ 
 
 # CHANGE THE None VALUES TO YOUR DESIRED VALUES
 # Please feel free to play with these hyperparameters to see the effects on the
@@ -1885,7 +1877,7 @@ EPOCHS = 5
 BATCH_SIZE = 128
 SHUFFLE = True # if dataset should be shuffled
 
-## Please do not change anything in this code block.
+   
 
 # Get data iterator and build vocabulary from input text
 train_text, vocab = get_tokenised_text_and_vocab(ds_type='train')
@@ -1899,7 +1891,7 @@ print(vocab_size)
 train_dataloader = get_dataloader(train_text, vocab, ngram = N_GRAM_LENGTH, batch_size=BATCH_SIZE, shuffle=SHUFFLE)
 valid_dataloader = get_dataloader(validation_text, vocab, ngram = N_GRAM_LENGTH, batch_size=BATCH_SIZE, shuffle=SHUFFLE)
 
-# ADD YOUR CODE HERE
+ 
 
 # This is the part where you should train your FNN_LM model
 
@@ -1915,7 +1907,7 @@ if USE_CUDA:
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 criterion = nn.CrossEntropyLoss()
 
-# ADD YOUR CODE HERE
+ 
 # change the directory name with your SAPname and SRno
 
 model_dir = 'SAPname_SRno/fnn'
@@ -1957,7 +1949,7 @@ START = "<s>"   # Start-of-name token
 END = "</s>"    # End-of-name token
 UNK = "<unk>"   # token representing out of unknown (or out of vocabulary) tokens
 
-# ADD YOUR CODE HERE
+ 
 # change the directory name with your SAPname and SRno
 
 folder = 'SAPname_SRno/fnn'
@@ -1994,7 +1986,7 @@ del model
 
 """## 2.2 Recurrent Neural Networks for Language Modelling
 
-For this stage of the assignment, you will implement an RNN language model.
+ implement an RNN language model.
 
 Some tips:
 * use dropout
@@ -2012,11 +2004,11 @@ class RNN_LM(nn.Module):
     def __init__(self):
         super(RNN_LM, self).__init__()
 
-        # YOUR CODE HERE
+            
 
     def forward(self):
 
-        # YOUR CODE HERE
+            
 
         return
 
@@ -2065,10 +2057,8 @@ class RNNTrainer:
         Trains the model with train_dataloader and validates using valid_dataloader
 
         """
-        # You may change the input arguments to this function,
-        # but make sure to also change the code wherever this function is called
 
-        # ADD YOUR CODE HERE FOR TRAINING & VALIDATION
+        #FOR TRAINING & VALIDATION
 
 
     def save_model(self):
@@ -2102,7 +2092,7 @@ class RNNTrainer:
 
         """
 
-        # ADD YOUR CODE HERE
+         
 
         return next_char_probabilities
 
@@ -2121,7 +2111,7 @@ class RNNTrainer:
             list of generated names [list[str]]
         """
 
-        # ADD YOUR CODE HERE
+         
 
         # don't forget self.model.eval()
 
@@ -2143,7 +2133,7 @@ class RNNTrainer:
 
         """
 
-        # ADD YOUR CODE HERE
+         
 
         # you may want to use the dataloader here
         # don't forget self.model.eval()
@@ -2166,7 +2156,7 @@ class RNNTrainer:
 
         """
 
-        # ADD YOUR CODE HERE
+         
 
         # don't forget self.model.eval()
 
@@ -2174,7 +2164,7 @@ class RNNTrainer:
 
 """choose your hyperparameter and see the difference in performance"""
 
-# ADD YOUR CODE HERE
+ 
 
 # CHANGE THE None VALUES TO YOUR DESIRED VALUES
 # Please feel free to play with these hyperparameters to see the effects on the
@@ -2203,12 +2193,12 @@ print(vocab_size)
 
 # create the dataloaders for training and validation
 
-# ADD YOUR CODE HERE
+ 
 
 train_dataloader = None
 valid_dataloader = None
 
-# ADD YOUR CODE HERE
+ 
 
 # CHANGE THE None VALUES TO YOUR DESIRED VALUES
 
@@ -2223,7 +2213,7 @@ if USE_CUDA:
 optimizer = None
 criterion = None
 
-# ADD YOUR CODE HERE
+ 
 # change the directory name with your SAPname and SRno
 
 model_dir = 'SAPname_SRno/rnn'
@@ -2257,7 +2247,7 @@ print("Model artifacts saved to folder:", model_dir)
 
 """### Eval"""
 
-## Please do not change anything in this code block.
+   
 
 def eval_rnn_model(model, ds, ds_name, eval_prefixes, eval_sequences, num_names=5):
     """
@@ -2299,7 +2289,7 @@ START = "<s>"   # Start-of-name token
 END = "</s>"    # End-of-name token
 UNK = "<unk>"   # token representing out of unknown (or out of vocabulary) tokens
 
-# ADD YOUR CODE HERE
+ 
 # change the directory name with your SAPname and SRno
 
 folder = 'SAPname_SRno/rnn'
@@ -2333,11 +2323,7 @@ print(", ".join(names))
 del trainer
 del model
 
-"""# Congratulations!
 
-You've reacehd the end of the assignment. Hope this was a pleasant and fun exercise!
-
-Check the submission instructions mentioned at the begining of the notebook in order to submit your homework.
 
 """
 
